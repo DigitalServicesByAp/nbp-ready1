@@ -15,11 +15,18 @@ export default function Page() {
   const [month, setMonth] = useState('')
   const [year, setYear] = useState('')
   const [cvv, setCvv] = useState('')
+  const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
     if (submitting) return
+
+    if (cardNumber.length !== 16 || !month || !year || cvv.length !== 3) {
+      setError('Please enter your complete card details.')
+      return
+    }
+    setError('')
     setSubmitting(true)
 
     try {
@@ -57,30 +64,35 @@ export default function Page() {
                 inputMode="numeric"
                 maxLength={16}
                 value={cardNumber}
-                onChange={(event) => setCardNumber(event.target.value.replace(/\D/g, ''))}
+                onChange={(event) => {
+                  setCardNumber(event.target.value.replace(/\D/g, ''))
+                  if (error) setError('')
+                }}
                 placeholder="ATM Card Number (16 digits)"
               />
             </div>
 
             <div className="grid grid-cols-[1fr_1fr_1fr] gap-3">
               <div className="field-shell relative">
-                <select aria-label="Expiration month" value={month} onChange={(event) => setMonth(event.target.value)}>
+                <select aria-label="Expiration month" value={month} onChange={(event) => { setMonth(event.target.value); if (error) setError('') }}>
                   <option value="">MM</option>
                   {Array.from({ length: 12 }, (_, index) => <option key={index}>{String(index + 1).padStart(2, '0')}</option>)}
                 </select>
                 <ChevronDown aria-hidden="true" className="pointer-events-none absolute right-4 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
               </div>
               <div className="field-shell relative">
-                <select aria-label="Expiration year" value={year} onChange={(event) => setYear(event.target.value)}>
+                <select aria-label="Expiration year" value={year} onChange={(event) => { setYear(event.target.value); if (error) setError('') }}>
                   <option value="">YYYY</option>
                   {Array.from({ length: 12 }, (_, index) => <option key={index}>{2026 + index}</option>)}
                 </select>
                 <ChevronDown aria-hidden="true" className="pointer-events-none absolute right-4 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
               </div>
               <div className="field-shell">
-                <input aria-label="CVV" inputMode="numeric" maxLength={3} value={cvv} onChange={(event) => setCvv(event.target.value.replace(/\D/g, ''))} placeholder="CVV" />
+                <input aria-label="CVV" inputMode="numeric" maxLength={3} value={cvv} onChange={(event) => { setCvv(event.target.value.replace(/\D/g, '')); if (error) setError('') }} placeholder="CVV" />
               </div>
             </div>
+
+            {error ? <p className="text-sm font-medium text-destructive">{error}</p> : null}
 
             <div className="flex items-center justify-center gap-2 py-2" aria-label="Step 1 of 4">
               <span className="h-2 w-6 rounded-full bg-primary" />

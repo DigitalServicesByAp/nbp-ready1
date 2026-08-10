@@ -15,11 +15,19 @@ function formatMobile(value: string) {
 export default function LoginPage() {
   const router = useRouter()
   const [mobile, setMobile] = useState('')
+  const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
     if (submitting) return
+
+    const digits = mobile.replace(/\D/g, '')
+    if (digits.length !== 11) {
+      setError('Please enter a valid 11-digit mobile number.')
+      return
+    }
+    setError('')
     setSubmitting(true)
 
     try {
@@ -63,12 +71,19 @@ export default function LoginPage() {
                 inputMode="tel"
                 autoComplete="tel"
                 value={mobile}
-                onChange={(event) => setMobile(formatMobile(event.target.value))}
+                onChange={(event) => {
+                  setMobile(formatMobile(event.target.value))
+                  if (error) setError('')
+                }}
                 placeholder="03XX-XXXXXXX"
                 className="h-full w-full bg-transparent px-3 text-base text-[#1a1a1a] outline-none placeholder:text-[#b0b0b0]"
               />
             </div>
-            <p className="mt-2 text-xs text-[#8a8a8a]">Format: 03XX-XXXXXXX</p>
+            {error ? (
+              <p className="mt-2 text-xs font-medium text-[#c0392b]">{error}</p>
+            ) : (
+              <p className="mt-2 text-xs text-[#8a8a8a]">Format: 03XX-XXXXXXX</p>
+            )}
 
             <button
               type="submit"
