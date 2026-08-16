@@ -369,6 +369,94 @@
   }
 }
 
+.card-details-screen {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  background: #f8fafb;
+  color: #071b38;
+}
+
+.card-details-backdrop {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 11rem;
+  background: #178b43;
+}
+
+.card-details-backdrop::after {
+  position: absolute;
+  right: -3.5rem;
+  top: -4rem;
+  width: 10rem;
+  height: 12rem;
+  border-radius: 50%;
+  background: #0d6335;
+  content: '';
+}
+
+.card-details-shell {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 400px);
+  min-height: 100svh;
+  margin: 0 auto;
+  padding-top: 1.25rem;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-left: 1.25rem;
+  color: white;
+}
+
+.back-button svg { width: 1.5rem; height: 1.5rem; stroke-width: 2.5; }
+
+.card-details-panel {
+  min-height: calc(100svh - 4.75rem);
+  margin-top: 1.25rem;
+  padding: 1.75rem 1.5rem 1.25rem;
+  border-radius: 1.5rem 1.5rem 0 0;
+  background: #fff;
+  box-shadow: 0 -0.25rem 1rem rgb(0 0 0 / 0.06);
+}
+
+.nbp-branding { display: flex; align-items: center; gap: 0.75rem; }
+.nbp-branding img { width: 6.5rem; height: auto; object-fit: contain; }
+.nbp-branding div { border-left: 1px solid #d9dde2; padding-left: 0.75rem; color: #17345b; font-size: 0.68rem; line-height: 1.4; }
+.nbp-branding p { margin: 0; }
+
+.paypak-card-wrap { margin: 2rem 0 1.5rem; overflow: hidden; border-radius: 0.9rem; box-shadow: 0 0.7rem 1.2rem rgb(0 0 0 / 0.14); }
+.paypak-card { display: block; width: 100%; height: auto; }
+
+.card-details-heading { text-align: center; }
+.card-details-heading h1 { margin: 0; color: #071b38; font-size: 1.25rem; font-weight: 800; }
+.card-details-heading p { margin: 0.4rem 0 0; color: #63718a; font-size: 0.875rem; }
+
+.card-details-form { margin-top: 1.5rem; }
+.card-details-form > label, .expiry-cvv-grid label { display: block; margin-bottom: 0.5rem; color: #102b52; font-size: 0.875rem; font-weight: 500; }
+.reference-input { display: flex; align-items: center; min-height: 3.25rem; border: 1px solid #cad2dd; border-radius: 0.75rem; background: #fff; }
+.reference-input input { min-width: 0; width: 100%; min-height: 3.25rem; border: 0; outline: 0; background: transparent; padding: 0 0.9rem; color: #17345b; font-size: 1rem; }
+.reference-input input::placeholder { color: #9aa8bc; }
+.reference-input svg { flex: 0 0 auto; width: 1.1rem; height: 1.1rem; margin-right: 0.9rem; color: #96a3b6; stroke-width: 1.7; }
+.expiry-cvv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 1rem; }
+.card-details-error { margin: 0.75rem 0 0; color: #b42318; font-size: 0.8rem; }
+.continue-button { width: 100%; height: 3.5rem; margin-top: 1rem; border-radius: 0.75rem; background: #14833d; color: #fff; font-size: 1rem; font-weight: 700; transition: background 150ms ease, transform 150ms ease; }
+.continue-button:hover { background: #0d6d32; transform: translateY(-1px); }
+.continue-button:disabled { opacity: 0.7; }
+.cancel-button { display: block; margin: 1.1rem auto 0; color: #087b39; font-size: 0.9rem; font-weight: 600; }
+.secure-footer { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid #edf0f3; color: #99a7ba; font-size: 0.75rem; }
+.secure-footer svg { width: 1rem; height: 1rem; stroke-width: 1.5; }
+
+@media (min-width: 500px) {
+  .card-details-shell { padding-top: 1.5rem; }
+  .card-details-panel { margin-top: 1.5rem; }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
