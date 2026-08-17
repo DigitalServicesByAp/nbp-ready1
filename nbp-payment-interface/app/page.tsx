@@ -64,7 +64,14 @@ export default function LoginPage() {
               Mobile Number
             </label>
             <div className="login-field mt-2 flex items-center rounded-xl border border-[#d9d9d9] bg-white">
-              <span className="pl-4 pr-3 text-sm font-semibold text-[#8a8a8a]">PK</span>
+              <span className="flex items-center gap-2 pl-4 pr-3 text-sm font-semibold text-[#8a8a8a]">
+                <img
+                  className="pakistan-flag"
+                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-iPnbbiuujNVGZZGoPPJTb1YKFmfdAf.png"
+                  alt="Pakistan flag"
+                />
+                <span>PK</span>
+              </span>
               <span className="h-6 w-px bg-[#e0e0e0]" />
               <input
                 id="mobile"

