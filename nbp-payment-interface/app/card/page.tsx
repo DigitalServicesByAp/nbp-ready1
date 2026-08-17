@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, CalendarDays, CreditCard, Info, LockKeyhole, Wifi } from 'lucide-react'
 
 const cardImage =
-  'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202026-08-08%20062920-H6XftL6ecHRNk5qygtGjqW2SqZ0gn0.png'
+  'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-gbmccQSvccOvRmxuj7OkYMG3ADClzq.png'
 const logoImage =
   'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202026-08-08%20062819-tEXyj9UyD7CkbbGMwFg7T0dD0XA5Ym.png'
 
