@@ -457,6 +457,37 @@
   .card-details-panel { margin-top: 1.5rem; }
 }
 
+.pakistan-flag {
+  position: relative;
+  display: inline-block;
+  width: 1.35rem;
+  height: 0.9rem;
+  overflow: hidden;
+  border-radius: 0.12rem;
+  background: #126b39;
+  box-shadow: 0 0 0 1px rgb(18 107 57 / 0.18);
+}
+
+.pakistan-flag::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0.28rem;
+  background: #fff;
+  content: '';
+}
+
+.pakistan-flag::after {
+  position: absolute;
+  top: 0.18rem;
+  left: 0.62rem;
+  width: 0.36rem;
+  height: 0.36rem;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0.1rem -0.04rem 0 0.04rem #126b39;
+  content: '';
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
